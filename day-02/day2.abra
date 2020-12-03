@@ -1,0 +1,46 @@
+// Whoops, looks like I never actually implemented an XOR operator...
+val xor = (a: Bool, b: Bool) => if a && b { false } else { a || b }
+
+type PwSpec {
+  max: Int
+  min: Int
+  char: String
+  pw: String
+
+  func isValid1(self): Bool {
+    val count = self.pw.chars().filter(ch => ch == self.char).length
+
+    self.min <= count && count <= self.max
+  }
+
+  func isValid2(self): Bool {
+    val v1 = self.pw[self.min - 1] == self.char
+    val v2 = self.pw[self.max - 1] == self.char
+
+    xor(v1, v2)
+  }
+}
+
+func processLine(line: String): PwSpec {
+  val parts = line.split(" ")
+  val minmax = (parts[0] ?: "").split("-")
+  val min = (minmax[0] ?: "0").parseInt() ?: 0
+  val max = (minmax[1] ?: "0").parseInt() ?: 0
+
+  val char = (parts[1] ?: "")[:-1]
+  val pw = parts[2] ?: ""
+
+  PwSpec(max: max, min: min, char: char, pw: pw)
+}
+
+val pwSpecs = if readFile("./input.txt") |input| {
+  input.trim().lines().map(processLine)
+} else {
+  []
+}
+
+val part1 = pwSpecs.filter(p => p.isValid1()).length
+println("Part 1: " + part1) // 410
+
+val part2 = pwSpecs.filter(p => p.isValid2()).length
+println("Part 2: " + part2) // 694

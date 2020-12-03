@@ -1,0 +1,59 @@
+func grid(): Bool[][]? {
+  if readFile("./input.txt") |input| {
+    input.trim().lines().map(l => l.chars().map(ch => ch == "#"))
+  } else {
+    None
+  }
+}
+
+type Slope { dx: Int, dy: Int }
+
+func treesOnSlope(sl: Slope, map: Bool[][]): Int {
+  val width = map[0]?.length ?: 0
+  val height = map.length
+
+  var x = 0
+  var y = 0
+  var numTrees = 0
+
+  while y < height - 1 {
+    x = (x + sl.dx) % width
+    y += sl.dy
+
+    if map[y] |row| {
+      if row[x] |tile| {
+        if tile {
+          numTrees += 1
+        }
+      }
+    }
+  }
+
+  numTrees
+}
+
+func part1(): Int {
+  val slope = Slope(dx: 3, dy: 1)
+  if grid() |grid| {
+    treesOnSlope(slope, grid)
+  } else {
+    0
+  }
+}
+println(part1()) // 286
+
+func part2(): Int {
+  val slopes = [
+    Slope(dx: 1, dy: 1),
+    Slope(dx: 3, dy: 1),
+    Slope(dx: 5, dy: 1),
+    Slope(dx: 7, dy: 1),
+    Slope(dx: 1, dy: 2)
+  ]
+  if grid() |grid| {
+    slopes.map(sl => treesOnSlope(sl, grid)).reduce(1, (acc, n) => acc * n)
+  } else {
+    0
+  }
+}
+println(part2()) // 3638606400

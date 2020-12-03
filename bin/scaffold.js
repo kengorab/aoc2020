@@ -1,7 +1,7 @@
 const fs = require('fs')
 const moment = require('moment')
 
-const day = moment().format('DD')
+const day = '03'//moment().format('DD')
 
 const dir = `./day-${day}`
 fs.mkdirSync(dir)
@@ -10,13 +10,21 @@ const template = `
 const fs = require('fs')
 const _ = require('lodash')
 
-const input = fs.readFileSync('./input.txt', { encoding: 'utf-8' })
+const realInput = fs.readFileSync('./input.txt', { encoding: 'utf-8' })
+const demoInput = \`
+
+\`
+
+function processInput(input) {
+  return input.trim().split('\\n').map(l => {
+    // Process input
+  })
+}
 
 function part1() {
   // Good luck!
 }
-
-part1()
+console.log(part1())
 `.trim()
 
 fs.writeFileSync(`${dir}/index.js`, template)

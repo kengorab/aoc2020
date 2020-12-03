@@ -1,0 +1,23 @@
+val numbers = if readFile("./input.txt") |input| {
+  input.trim().lines().map(l => l.parseInt() ?: 0)
+} else {
+  []
+}
+
+for i in numbers {
+  for j in numbers {
+    if i + j == 2020 {
+      println("Part 1: "+ i * j)
+    }
+  }
+}
+
+for i in numbers {
+  for j in numbers {
+    for k in numbers {
+      if i + j + k == 2020 {
+        println("Part 2: "+ i * j * k)
+      }
+    }
+  }
+}

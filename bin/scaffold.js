@@ -1,7 +1,7 @@
 const fs = require('fs')
 const moment = require('moment')
 
-const day = '03'//moment().format('DD')
+const day = moment().format('DD')
 
 const dir = `./day-${day}`
 fs.mkdirSync(dir)

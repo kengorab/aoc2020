@@ -27,40 +27,36 @@ function processInput(input) {
 
 function part1() {
   function isValid(passport) {
-    const reqFields = ['byr', 'iyr', 'eyr', 'hgt', 'hcl', 'ecl', 'pid']
-    const reqOptFields = [...reqFields, 'cid']
-    const ppKeys = new Set(Object.keys(passport))
-    return _.isEqual(new Set(reqFields), ppKeys) || _.isEqual(new Set(reqOptFields), ppKeys)
+    const keys = new Set(Object.keys(passport))
+    return ['byr', 'iyr', 'eyr', 'hgt', 'hcl', 'ecl', 'pid'].every(f => keys.has(f))
   }
 
   const passports = processInput(realInput)
   return passports.filter(isValid).length
 }
-
 console.log(part1()) // 204
 
 function part2() {
-  const rules = {
-    'byr': ({ byr }) => !!byr && 1920 <= _.parseInt(byr) && _.parseInt(byr) <= 2002,
-    'iyr': ({ iyr }) => !!iyr && 2010 <= _.parseInt(iyr) && _.parseInt(iyr) <= 2020,
-    'eyr': ({ eyr }) => !!eyr && 2020 <= _.parseInt(eyr) && _.parseInt(eyr) <= 2030,
-    'hgt': ({ hgt }) => {
-      if (!hgt) return false
+  function between(n, l, h) {
+    if (!n) return false
+    return l <= n && n <= h
+  }
 
+  const rules = {
+    'byr': ({ byr }) => between(byr, 1920, 2002),
+    'iyr': ({ iyr }) => between(iyr, 2010, 2020),
+    'eyr': ({ eyr }) => between(eyr, 2020, 2030),
+    'hgt': ({ hgt }) => {
       const match = /([0-9]+)(in|cm)$/.exec(hgt)
       if (!match) return false
 
       const [, amt, unit] = match
-      const num = _.parseInt(amt)
-      if (unit === 'in') {
-        return 59 <= num && num <= 76
-      } else {
-        return 150 <= num && num <= 193
-      }
+      if (unit === 'in') return between(amt, 59, 76)
+      else return between(amt, 150, 193)
     },
-    'hcl': ({ hcl }) => !!hcl && /#[0-9a-f]{6}/.test(hcl),
-    'ecl': ({ ecl }) => !!ecl && ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth'].includes(ecl),
-    'pid': ({ pid }) => !!pid && /\b[0-9]{9}\b/.test(pid),
+    'hcl': ({ hcl }) => /#[\da-f]{6}/.test(hcl),
+    'ecl': ({ ecl }) => ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth'].includes(ecl),
+    'pid': ({ pid }) => /\b\d{9}\b/.test(pid),
     'cid': () => true
   }
 
@@ -74,5 +70,4 @@ function part2() {
   const passports = processInput(realInput)
   return passports.filter(isValid).length
 }
-
 console.log(part2()) // 179

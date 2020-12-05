@@ -1,0 +1,68 @@
+func boardingPasses(): String[] {
+  if readFile("./input.txt") |input| {
+    input.trim().lines()
+  } else {
+    []
+  }
+}
+
+func boardingNumberToSeatId(boardingNumber: String): Int {
+  var row = 0
+  var col = 0
+  var rowSize = 128
+  var colSize = 8
+
+  for ch in boardingNumber.chars() {
+    if ch == "F" || ch == "B" {
+      rowSize = (rowSize / 2).round()
+      if ch == "B" {
+        row += rowSize
+      }
+    }
+
+    if ch == "L" || ch == "R" {
+      colSize = (colSize / 2).round()
+      if ch == "R" {
+        col += colSize
+      }
+    }
+  }
+
+  row * 8 + col
+}
+
+val seatIds = boardingPasses().map(boardingNumberToSeatId)
+
+func part1() {
+  var max = 0
+  for id in seatIds {
+    if id > max {
+      max = id
+    }
+  }
+  max
+}
+println("Part 1: " + part1()) // 838
+
+func contains<T>(arr: T[], item: T): Bool {
+  var contains = false
+  for i in arr {
+    if item == i {
+      contains = true
+    }
+  }
+  contains
+}
+
+func part2() {
+  var mySeat = 0
+  for id in range(0, part1()) {
+    if !contains(seatIds, id) {
+      if contains(seatIds, id - 1) && contains(seatIds, id + 1) {
+        mySeat = id
+      }
+    }
+  }
+  mySeat
+}
+println("Part 2: " + part2()) // 714

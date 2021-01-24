@@ -1,0 +1,140 @@
+val realInput = "589174263"
+val demoInput = "389125467"
+val input = realInput
+
+type Node {
+  value: Int,
+  next: Node? = None
+
+  func fromArray(arr: Int[]): Node {
+    var head = Node(value: arr[0] ?: 0)
+    var tail = head
+
+    for i in arr[1:] {
+      val node = Node(value: i)
+      tail.next = node
+      tail = node
+    }
+    tail.next = head
+
+    head
+  }
+
+  func forEach(self, len: Int, fn: (Node) => Unit) {
+    var head = self
+    for _ in range(0, len) {
+      fn(head)
+      head = head.next ?: head // Lol, possible infinite loop
+    }
+  }
+
+  func print(self, len: Int) {
+    var str = ""
+    self.forEach(len, n => str += n.value)
+    println(str)
+  }
+}
+
+val N = input.length
+
+func destCup(curCup: Int, removedNums: Int[], numCups: Int): Int {
+  var dest = if curCup - 1 < 1 { numCups } else { curCup - 1 }
+  while removedNums.contains(dest) {
+    dest -= 1
+    dest = if dest < 1 { numCups } else { dest }
+  }
+  dest
+}
+
+func part1(): String {
+  var head = Node.fromArray(input.chars().map(c => c.parseInt() ?: 0))
+
+  val map: Map<Int, Node> = {}
+  head.forEach(N, n => { map[n.value] = n })
+
+  for _ in range(0, 100) {
+    val curr = head
+    val firstCup = head.next ?: head
+    val thirdCup = head.next?.next?.next ?: head
+    val removed = [head.next?.value ?: 0, head.next?.next?.value ?: 0, head.next?.next?.next?.value ?: 0] // Yuck
+    head.next = thirdCup.next
+
+    val dest = destCup(curr.value, removed, N)
+    head = map[dest] ?: head
+    thirdCup.next = head.next
+    head.next = firstCup
+
+    head = curr.next ?: head
+  }
+
+  head = map[1]?.next ?: head
+  var i = 1
+  var ret = ""
+  while i < N {
+    ret += head.value
+    head = head.next ?: head
+    i += 1
+  }
+  ret
+}
+println("Part 1: " + part1()) // 43896725
+
+func part2(): Int {
+  val nums = input.chars().map(c => c.parseInt() ?: 0)
+  for i in range(10, 1000000) {
+    if i % 10000 == 0 {
+      println("i: " + i)
+    }
+    nums.push(i)
+  }
+  var head = Node.fromArray(nums)
+
+  val map: Map<Int, Node> = {}
+  head.forEach(N, n => { map[n.value] = n })
+
+  println("starting...")
+  for r in range(0, 10000000) {
+    if r % 10000 == 0 {
+      println("r: " + r)
+    }
+    val curr = head
+    val firstCup = head.next ?: head
+    val thirdCup = head.next?.next?.next ?: head
+    val removed = [head.next?.value ?: 0, head.next?.next?.value ?: 0, head.next?.next?.next?.value ?: 0] // Yuck
+    head.next = thirdCup.next
+
+    // ---
+    guard nums[9] + guard nums[4]
+
+    val curr = head
+    val firstCup = guard head.next                    // head.next ?: head
+    val firstCup = head.next?                         // head.next ?: head
+    val firstCup = head.next!                         // head.next ?: head
+    val thirdCup = guard head.next?.next?.next        // head.next?.next?.next ?: head
+    val thirdCup = head.next?.next?.next?            // head.next?.next?.next ?: head
+    val thirdCup = head.next?.next?.next!            // head.next?.next?.next ?: head
+    //val removed = [head.next?.value ?: 0, head.next?.next?.value ?: 0, head.next?.next?.next?.value ?: 0] // Yuck
+    val removed = [guard head.next?.value, guard head.next?.next?.value, guard head.next?.next?.next?.value]
+    val removed = [head.next?.value?, head.next?.next?.value?, head.next?.next?.next?.value?]
+    val removed = guard [head.next?.value, head.next?.next?.value, head.next?.next?.next?.value]
+    val removed = [head.next?.value, head.next?.next?.value, head.next?.next?.next?.value]?
+    val removed = [head.next?.value!, head.next?.next?.value!, head.next?.next?.next?.value!]
+    val removed = [head.next?.value, head.next?.next?.value, head.next?.next?.next?.value]!
+    head.next = thirdCup.next
+
+    // ---
+
+    val dest = destCup(curr.value, removed, N)
+    head = map[dest] ?: head
+    thirdCup.next = head.next
+    head.next = firstCup
+
+    head = curr.next ?: head
+  }
+
+  head = map[1] ?: head
+  val f1 = head.next?.value ?: 0
+  val f2 = head.next?.next?.value ?: 0
+  f1 * f2
+}
+println("Part 2: " + part2()) // ⏱⏱⏱⏱ too long

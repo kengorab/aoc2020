@@ -1,0 +1,61 @@
+val joltages = if readFile("./input.txt") |input| {
+  input.trim().lines().map(l => l.parseInt() ?: 0)
+} else {
+  []
+}
+val adapters = [0].concat(joltages.sortBy(i => i))
+adapters.push((adapters[-1] ?: 0) + 3)
+
+func part1() {
+  val diffs = [0, 0, 0, 0]
+  for i in range(0, adapters.length - 1) {
+    val diff = (adapters[i + 1] ?: 0) - (adapters[i] ?: 0)
+    diffs[diff] = (diffs[diff] ?: 0) + 1
+  }
+  (diffs[1] ?: 0) * (diffs[3] ?: 0)
+}
+println(part1()) // 2574
+
+func part2() {
+  func buildDag(): Map<Int, (Int[], Int?)> {
+    val nodes: Map<Int, (Int[], Int?)> = {}
+
+    for adapter, i in adapters {
+      val edges: Int[] = []
+      var j = i + 1
+      while true {
+        if adapters[j] |aj| {
+          if aj - adapter <= 3 {
+            edges.push(aj)
+            j += 1
+          } else { break }
+        } else { break }
+      }
+
+      if !edges.isEmpty() {
+        nodes[adapter] = (edges, None)
+      }
+    }
+
+    nodes
+  }
+
+  val dag = buildDag()
+  val endValue = adapters[-2] ?: 0
+
+  func traverse(start = 0): Int {
+    if dag[start] |node| {
+      if node[1] == None {
+        node[1] = if start == endValue {
+          1
+        } else {
+          node[0].reduce(0, (acc, e) => acc + traverse(e))
+        }
+      }
+      node[1] ?: 0
+    } else { 0 }
+  }
+
+  traverse()
+}
+println(part2()) // 2644613988352

@@ -44,21 +44,11 @@ func part1() {
 }
 println("Part 1: " + part1()) // 838
 
-func contains<T>(arr: T[], item: T): Bool {
-  var contains = false
-  for i in arr {
-    if item == i {
-      contains = true
-    }
-  }
-  contains
-}
-
 func part2() {
   var mySeat = 0
   for id in range(0, part1()) {
-    if !contains(seatIds, id) {
-      if contains(seatIds, id - 1) && contains(seatIds, id + 1) {
+    if !seatIds.contains(id) {//contains(seatIds, id) {
+      if seatIds.contains(id - 1) && seatIds.contains(id + 1) {
         mySeat = id
       }
     }

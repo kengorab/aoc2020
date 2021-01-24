@@ -1,0 +1,91 @@
+val instrs = if readFile("./input.txt") |input| {
+  input.trim().lines().map(l => {
+    val action = l[0]
+    val amt = l[1:].parseInt() ?: 0
+    (action, amt)
+  })
+} else {
+  []
+}
+
+type Part1State {
+  dir: Int = 1 // N -> 0, E -> 1, S -> 2, W -> 3
+  x: Int = 0
+  y: Int = 0
+}
+
+func part1() {
+  val state = Part1State()
+
+  for instr in instrs {
+    val action = instr[0]
+    val amt = instr[1]
+
+    if action == "N" {
+      state.y -= amt
+    } else if action == "S" {
+      state.y += amt
+    } else if action == "E" {
+      state.x += amt
+    } else if action == "W" {
+      state.x -= amt
+    } else if action == "L" || action == "R" {
+      val n = if action == "L" { -1 } else { 1 }
+      state.dir = (state.dir + 4 + (n * (amt / 90).round())) % 4
+    } else if action == "F" && state.dir == 0 {
+      state.y -= amt
+    } else if action == "F" && state.dir == 1 {
+      state.x += amt
+    } else if action == "F" && state.dir == 2 {
+      state.y += amt
+    } else if action == "F" && state.dir == 3 {
+      state.x -= amt
+    }
+  }
+
+  state.x.abs() + state.y.abs()
+}
+println(part1()) // 562
+
+type Part2State {
+  wpx: Int = 10
+  wpy: Int = -1
+  x: Int = 0
+  y: Int = 0
+}
+
+func part2() {
+  val state = Part2State()
+
+  for instr in instrs {
+    val action = instr[0]
+    val amt = instr[1]
+
+    if action == "N" {
+      state.wpy -= amt
+    } else if action == "S" {
+      state.wpy += amt
+    } else if action == "E" {
+      state.wpx += amt
+    } else if action == "W" {
+      state.wpx -= amt
+    } else if action == "L" || action == "R" {
+      val rot = (amt / 90).round() % 4
+      val n = if action == "L" { -1 } else { 1 }
+      if rot == 2 {
+        state.wpx = -state.wpx
+        state.wpy = -state.wpy
+      } else if rot == 1 || rot == 3 {
+        val tmp = state.wpx
+        state.wpx = n * state.wpy * (if rot == 1 {-1} else {1})
+        state.wpy = n * tmp * (if rot == 3 {-1} else {1})
+      }
+    } else if action == "F" {
+      state.x += amt * state.wpx
+      state.y += amt * state.wpy
+    }
+  }
+
+  state.x.abs() + state.y.abs()
+}
+println(part2()) // 101860

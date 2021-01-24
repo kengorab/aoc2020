@@ -4,20 +4,28 @@ val numbers = if readFile("./input.txt") |input| {
   []
 }
 
-for i in numbers {
-  for j in numbers {
-    if i + j == 2020 {
-      println("Part 1: "+ i * j)
-    }
-  }
-}
-
-for i in numbers {
-  for j in numbers {
-    for k in numbers {
-      if i + j + k == 2020 {
-        println("Part 2: "+ i * j * k)
+func part1(): Int? {
+  for i in numbers {
+    for j in numbers {
+      if i + j == 2020 {
+        return i * j
       }
     }
   }
+  None
 }
+println("Part 1: " + part1()) // 197451
+
+func part2(): Int? {
+  for i in numbers {
+    for j in numbers {
+      for k in numbers {
+        if i + j + k == 2020 {
+          return i * j * k
+        }
+      }
+    }
+  }
+  None
+}
+println("Part 2: " + part2()) // 138233720

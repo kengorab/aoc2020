@@ -1,0 +1,31 @@
+val pubKey1 = 3248366
+val pubKey2 = 4738476
+
+func determineLoopSize(key: Int): Int {
+  var numLoops = 0
+  var subject = 1
+
+  while true {
+    numLoops += 1
+    subject = (subject * 7) % 20201227
+    if subject == key {
+      return numLoops
+    }
+  }
+  -1
+}
+
+func transform(subject: Int, numLoops: Int): Int {
+  var res = 1
+  for _ in range(0, numLoops) {
+    res = (res * subject) % 20201227
+  }
+  res
+}
+
+func part1(): Int {
+  val l2 = determineLoopSize(pubKey2)
+
+  transform(pubKey1, l2)
+}
+println("Part 1: " + part1()) // 18293391
